@@ -13,7 +13,7 @@
 [![ESLint](https://img.shields.io/badge/ESLint-10-4B32C3?logo=eslint&logoColor=white)](https://github.com/eslint/eslint)
 [![Prettier](https://img.shields.io/badge/Prettier-3-F7B93E?logo=prettier&logoColor=black)](https://github.com/prettier/prettier)
 [![All Rights Reserved](https://img.shields.io/badge/License-All%20Rights%20Reserved-red.svg)](LICENSE)
-[![GitHub](https://img.shields.io/badge/GitHub-scottdreinhart%2Fconnect-four-181717?logo=github&logoColor=white)](https://github.com/scottdreinhart/connect-four)
+[![GitHub](https://img.shields.io/badge/GitHub-scottdreinhart%2Fconnect--four-181717?logo=github&logoColor=white)](https://github.com/scottdreinhart/connect-four)
 
 Drop discs into a 7×6 grid; first to four in a row wins
 
