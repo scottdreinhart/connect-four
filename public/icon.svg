@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="96" fill="#1565c0"/>
+  <rect x="116" y="190" width="280" height="200" rx="16" fill="#0d47a1"/>
+  <g>
+    <circle cx="172" cy="230" r="22" fill="#e3f2fd"/><circle cx="242" cy="230" r="22" fill="#e3f2fd"/><circle cx="312" cy="230" r="22" fill="#e3f2fd"/><circle cx="172" cy="300" r="22" fill="#f44336"/><circle cx="242" cy="300" r="22" fill="#ffeb3b"/><circle cx="312" cy="300" r="22" fill="#f44336"/><circle cx="242" cy="360" r="22" fill="#ffeb3b"/><circle cx="312" cy="360" r="22" fill="#f44336"/><circle cx="172" cy="360" r="22" fill="#e3f2fd"/>
+    <circle cx="382" cy="230" r="22" fill="#e3f2fd"/><circle cx="382" cy="300" r="22" fill="#e3f2fd"/><circle cx="382" cy="360" r="22" fill="#ffeb3b"/>
+  </g>
+  <text x="256" y="160" text-anchor="middle" font-family="system-ui,sans-serif" font-size="40" font-weight="700" fill="white" letter-spacing="3">CONNECT FOUR</text>
+</svg>
