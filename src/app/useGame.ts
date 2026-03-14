@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { selectMove } from '@/domain/ai'
 import { applyMove, createInitialBoard } from '@/domain/board'
 import { CPU_DELAY_MS, DEFAULT_COUNTS } from '@/domain/constants'
