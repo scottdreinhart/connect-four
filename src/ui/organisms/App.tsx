@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useKeyboardControls } from '@/app/useKeyboardControls'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 import { vibrate } from '@/app/haptics'
 import { applyMove, createInitialState, getCell, isColumnPlayable } from '@/domain/board'
@@ -19,6 +20,7 @@ const DIFFICULTY_LABEL: Record<Difficulty, string> = {
 export default function App() {
   const [game, setGame] = useState<GameState>(() => createInitialState('pvc', 'medium'))
   const [hoveredCol, setHoveredCol] = useState<number | null>(null)
+  const [activeCol, setActiveCol] = useState(0)
   const [isThinking, setIsThinking] = useState(false)
   const [animatingCell, setAnimatingCell] = useState<{ col: number; row: number } | null>(null)
   const thinkingRef = useRef(false)
@@ -69,6 +71,34 @@ export default function App() {
     },
     [game, isGameOver, isThinking, isCpuTurn],
   )
+
+  const findNextPlayableColumn = useCallback(
+    (startCol: number, direction: -1 | 1) => {
+      for (let step = 1; step <= COLS; step++) {
+        const candidate = (startCol + direction * step + COLS) % COLS
+        if (isColumnPlayable(game.board, candidate)) {
+          return candidate
+        }
+      }
+      return startCol
+    },
+    [game.board],
+  )
+
+  const moveActiveColumn = useCallback(
+    (direction: -1 | 1) => {
+      const nextCol = findNextPlayableColumn(activeCol, direction)
+      setActiveCol(nextCol)
+      setHoveredCol(nextCol)
+    },
+    [activeCol, findNextPlayableColumn],
+  )
+
+  const dropAtActiveColumn = useCallback(() => {
+    if (isColumnPlayable(game.board, activeCol)) {
+      handleColumnClick(activeCol)
+    }
+  }, [game.board, activeCol, handleColumnClick])
 
   // ── CPU move (via Web Worker) ────────────────────────
   useEffect(() => {
@@ -165,6 +195,49 @@ export default function App() {
     thinkingRef.current = false
   }, [game])
 
+  useEffect(() => {
+    if (!isColumnPlayable(game.board, activeCol)) {
+      setActiveCol(findNextPlayableColumn(activeCol, 1))
+    }
+  }, [game.board, activeCol, findNextPlayableColumn])
+
+  const keyboardBindings = useMemo(
+    () => [
+      {
+        action: 'move-left',
+        keys: ['ArrowLeft', 'KeyA'],
+        onTrigger: () => moveActiveColumn(-1),
+        enabled: !isGameOver,
+      },
+      {
+        action: 'move-right',
+        keys: ['ArrowRight', 'KeyD'],
+        onTrigger: () => moveActiveColumn(1),
+        enabled: !isGameOver,
+      },
+      {
+        action: 'drop',
+        keys: ['ArrowDown', 'Enter', 'Space'],
+        onTrigger: dropAtActiveColumn,
+        enabled: !isGameOver,
+      },
+      {
+        action: 'new-game',
+        keys: ['KeyN'],
+        onTrigger: handleNewGame,
+      },
+      {
+        action: 'undo',
+        keys: ['KeyU'],
+        onTrigger: handleUndo,
+        enabled: game.moveHistory.length > 0 && !isThinking,
+      },
+    ],
+    [isGameOver, moveActiveColumn, dropAtActiveColumn, handleNewGame, handleUndo, game.moveHistory.length, isThinking],
+  )
+
+  useKeyboardControls(keyboardBindings)
+
   // ── Status text ──────────────────────────────────────
   const statusText = (() => {
     if (game.result.status === 'win') {
@@ -188,6 +261,8 @@ export default function App() {
       winCells.add(`${pos.col},${pos.row}`)
     }
   }
+
+  const previewCol = hoveredCol ?? activeCol
 
   // ── Render ───────────────────────────────────────────
   return (
@@ -242,7 +317,7 @@ export default function App() {
             <div
               key={col}
               className={`column-indicator ${
-                hoveredCol === col && !isGameOver && !isThinking && !isCpuTurn
+                previewCol === col && !isGameOver && !isThinking && !isCpuTurn
                   ? `visible player-${game.currentPlayer}`
                   : ''
               }`}
@@ -266,6 +341,10 @@ export default function App() {
                 }
               }}
               onMouseEnter={() => setHoveredCol(col)}
+              onFocus={() => {
+                setActiveCol(col)
+                setHoveredCol(col)
+              }}
             >
               {/* Render rows top-to-bottom (row 5 at top, row 0 at bottom) */}
               {Array.from({ length: ROWS }, (_, rowIdx) => {

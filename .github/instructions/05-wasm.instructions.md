@@ -15,7 +15,7 @@ The WASM subsystem provides a high-performance AI engine for CPU move computatio
 
 | Path | Purpose |
 |---|---|
-| `assembly/index.ts` | AssemblyScript source — bitboard AI engine |
+| `assembly/index.ts` | AssemblyScript source — AI engine |
 | `assembly/tsconfig.json` | AssemblyScript compiler config (extends `assemblyscript/std/assembly.json`) |
 | `scripts/build-wasm.js` | Node build script — compiles AS → WASM → base64 → `src/wasm/ai-wasm.ts` |
 | `src/wasm/ai-wasm.ts` | Auto-generated base64 WASM module (do not edit manually) |
@@ -24,13 +24,7 @@ The WASM subsystem provides a high-performance AI engine for CPU move computatio
 
 ### Data flow
 
-```
-assembly/index.ts → (pnpm wasm:build) → build/ai.wasm → base64 → src/wasm/ai-wasm.ts
-                                                                        ↓
-                                                        src/workers/ai.worker.ts (loads at runtime)
-                                                                        ↓
-                                                        src/ui/organisms/App.tsx (postMessage / onmessage)
-```
+assembly/index.ts → (pnpm wasm:build) → build/ai.wasm → base64 → src/wasm/ai-wasm.ts → src/workers/ai.worker.ts → UI organism (postMessage / onmessage)
 
 ---
 
@@ -63,9 +57,9 @@ The Web Worker (`src/workers/ai.worker.ts`) follows a WASM-first strategy:
 
 1. On startup, decode base64 → compile → instantiate WASM module
 2. If WASM is available, use it for all move computations
-3. If WASM fails (empty base64, compilation error), fall back to JS minimax (`src/domain/ai.ts`)
+3. If WASM fails (empty base64, compilation error), fall back to JS AI (`src/domain/ai.ts`)
 
-The worker communicates with `App.tsx` via `postMessage` / `onmessage`. All AI computation runs off the main thread.
+The worker communicates with the main app organism via `postMessage` / `onmessage`. All AI computation runs off the main thread.
 
 ### Import rules for workers
 

@@ -55,30 +55,18 @@ Boundaries are enforced at lint time by `eslint-plugin-boundaries` (see `eslint.
 
 ## Component Hierarchy (Atomic Design)
 
-```
 atoms/ → molecules/ → organisms/
-```
 
 - Data flows unidirectionally: **Hooks → Organism → Molecules → Atoms**.
-- Organisms contain zero inline markup; all composition happens in JSX.
 - Components are predictable, composable, and reusable across contexts.
 
 ---
 
 ## Import Conventions
 
-- **Path aliases**: `@/domain/...`, `@/app/...`, `@/ui/...` (configured in `tsconfig.json` paths + `vite.config.js` resolve.alias).
+- **Path aliases**: `@/domain/...`, `@/app/...`, `@/ui/...`.
 - **Barrel imports**: Always import from `index.ts`, never from internal module files.
 - **No cross-layer relative imports**: Never use `../../` to cross layer boundaries.
-
-```typescript
-// ✅ Correct
-import { createBoard, checkGameResult } from '@/domain';
-import { useTheme } from '@/app';
-
-// ❌ Wrong — cross-layer relative import
-import { createBoard } from '../../domain/board';
-```
 
 ---
 
@@ -86,13 +74,7 @@ import { createBoard } from '../../domain/board';
 
 `src/index.tsx` wires the provider tree:
 
-```
 ThemeProvider > SoundProvider > ErrorBoundary > App
-```
-
-- `ThemeProvider` — theme state via React Context.
-- `SoundProvider` — sound state + guarded play functions via React Context.
-- `ErrorBoundary` — crash isolation with themed fallback UI + retry button.
 
 ---
 
@@ -109,16 +91,7 @@ ThemeProvider > SoundProvider > ErrorBoundary > App
 
 All commands run in **Bash (WSL: Ubuntu)** (default shell).
 
-```bash
-pnpm lint           # ESLint check
-pnpm lint:fix       # ESLint auto-fix
-pnpm format         # Prettier format
-pnpm format:check   # Prettier check (no write)
-pnpm typecheck      # tsc --noEmit
-pnpm check          # lint + format:check + typecheck (quality gate)
-pnpm fix            # lint:fix + format (auto-fix everything)
-pnpm validate       # check + build (full pre-push validation)
-```
+pnpm lint, pnpm lint:fix, pnpm format, pnpm format:check, pnpm typecheck, pnpm check, pnpm fix, pnpm validate.
 
 Run `pnpm validate` before pushing.
 
@@ -127,8 +100,6 @@ Run `pnpm validate` before pushing.
 ## Language Guardrails
 
 Frontend code uses **TypeScript** for logic and **CSS** for styling.
-
 Do not introduce orphaned helper scripts or alternate runtimes.
-Do not create Python, Bash, PowerShell, Ruby, Go, Rust, Java, C#, or other side-language utilities.
 Prefer existing `package.json` scripts and repository-native tooling (Vite, ESLint, Prettier).
 Modern ESM syntax; match existing code conventions.
